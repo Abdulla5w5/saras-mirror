@@ -7,6 +7,7 @@ var _t := 0.0
 var _light := 0.0
 var _sara: AnimatedSprite2D
 var _mom: AnimatedSprite2D
+var _fg: Control
 var _box: PanelContainer
 var _speaker: Label
 var _line: Label
@@ -37,7 +38,9 @@ func _ready() -> void:
 	room.draw.connect(_draw_room.bind(room))
 	add_child(room)
 	var tmr := Timer.new(); tmr.wait_time = 0.05; tmr.autostart = true
-	tmr.timeout.connect(func(): room.queue_redraw())
+	tmr.timeout.connect(func():
+		room.queue_redraw()
+		if _fg: _fg.queue_redraw())
 	add_child(tmr)
 
 	# whole mirror on the wall
@@ -47,17 +50,30 @@ func _ready() -> void:
 	mirror.position = Vector2(vp.x * 0.78, vp.y * 0.38)
 	add_child(mirror)
 
-	# Sara, asleep (lying on her side on the bed)
-	_sara = _make_sprite("res://assets/sara/", Vector2(2.1, 2.1))
-	_sara.rotation = -PI * 0.5
-	_sara.position = _bed + Vector2(-30, -6)
+	var cy := vp.y * 0.5
+	var by := cy + 74.0
+	var cx := vp.x * 0.5
+	var floor_y := vp.y * 0.82
+
+	# Sara, in bed asleep (slumped, feet tucked deep so the blanket covers her legs)
+	_sara = _make_sprite("res://assets/sara/", Vector2(2.0, 2.0), true)
+	_sara.position = Vector2(cx - 30, by + 44)
+	_sara.rotation = -0.32                 # leaning, asleep
+	_sara.modulate = Color(0.8, 0.8, 0.85)
 	add_child(_sara)
 
-	# Mom, off to the right, will walk in
-	_mom = _make_sprite("res://assets/mom/", Vector2(2.2, 2.2))
-	_mom.position = Vector2(vp.x + 120, _bed.y + 4)
-	_mom.flip_h = true                    # facing left as she walks in
+	# Mom walks in and stands on the FLOOR (feet-anchored)
+	_mom = _make_sprite("res://assets/mom/", Vector2(2.1, 2.1), true)
+	_mom.position = Vector2(vp.x + 120, floor_y)
+	_mom.flip_h = true                     # facing left as she walks in
 	add_child(_mom)
+
+	# foreground blanket + bed front, drawn ON TOP so Sara sits *in* the bed
+	_fg = Control.new()
+	_fg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_fg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fg.draw.connect(_draw_fg.bind(_fg))
+	add_child(_fg)
 
 	_build_box(vp)
 
@@ -68,7 +84,7 @@ func _ready() -> void:
 	tw.tween_callback(_mom_enter)
 
 
-func _make_sprite(dir: String, scale: Vector2) -> AnimatedSprite2D:
+func _make_sprite(dir: String, scale: Vector2, feet := false) -> AnimatedSprite2D:
 	var sf := SpriteFrames.new()
 	SpriteSheet.add_strip(sf, "idle", SpriteSheet.load_tex(dir + "Idle.png"), 128, -1, 6.0)
 	SpriteSheet.add_strip(sf, "walk", SpriteSheet.load_tex(dir + "Walk.png"), 128, -1, 12.0)
@@ -77,6 +93,8 @@ func _make_sprite(dir: String, scale: Vector2) -> AnimatedSprite2D:
 	var s := AnimatedSprite2D.new()
 	s.sprite_frames = sf
 	s.scale = scale
+	if feet:
+		s.offset = Vector2(0, -52)    # anchor by the feet
 	s.play("idle")
 	return s
 
@@ -84,7 +102,7 @@ func _make_sprite(dir: String, scale: Vector2) -> AnimatedSprite2D:
 func _mom_enter() -> void:
 	_mom.play("walk")
 	var tw := create_tween()
-	tw.tween_property(_mom, "position:x", get_viewport_rect().size.x * 0.66, 1.8)
+	tw.tween_property(_mom, "position:x", get_viewport_rect().size.x * 0.72, 1.8)
 	tw.tween_callback(func():
 		_mom.play("idle")
 		Audio.win())
@@ -93,10 +111,11 @@ func _mom_enter() -> void:
 
 
 func _sit_up() -> void:
+	# straighten up and brighten — she wakes, still sitting in the bed
 	var tw := create_tween()
 	tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(_sara, "rotation", 0.0, 0.5)
-	tw.parallel().tween_property(_sara, "position", _bed + Vector2(-30, -34), 0.5)
+	tw.parallel().tween_property(_sara, "modulate", Color.WHITE, 0.5)
 
 
 func _build_box(vp: Vector2) -> void:
@@ -181,3 +200,15 @@ func _draw_room(c: Control) -> void:
 	c.draw_rect(Rect2(cx - 160, by - 28, 320, 44), Color(0.5, 0.4, 0.7).lerp(Color(0.8, 0.7, 0.95), _light * 0.5))
 	c.draw_rect(Rect2(cx - 160, by - 52, 78, 34), Color(0.9, 0.9, 0.95))
 	c.draw_rect(Rect2(0, 0, size.x, size.y), Color(0, 0, 0, 0.34 * (1.0 - _light)))
+
+
+func _draw_fg(c: Control) -> void:
+	# blanket pulled over Sara's legs + the bed's front rail, drawn in front of her
+	var cy := c.size.y * 0.5
+	var by := cy + 74.0
+	var cx := c.size.x * 0.5
+	var blanket := Color(0.5, 0.4, 0.7).lerp(Color(0.82, 0.72, 0.96), _light * 0.5)
+	var frame := Color(0.34, 0.2, 0.18).lerp(Color(0.56, 0.34, 0.30), _light * 0.5)
+	c.draw_rect(Rect2(cx - 150, by - 30, 300, 76), blanket)
+	c.draw_line(Vector2(cx - 150, by - 8), Vector2(cx + 150, by - 8), Color(0, 0, 0, 0.12), 3.0)
+	c.draw_rect(Rect2(cx - 160, by + 46, 320, 28), frame)
