@@ -19,10 +19,9 @@ func build() -> void:
 	spawn_boundary(Vector2(-560, -60), Vector2(40, 1000))
 	spawn_boundary(Vector2(560, -60), Vector2(40, 1000))
 	spawn_boundary(Vector2(0, -520), Vector2(1120, 40))
-	# hall of mirrors — decoration lining the walls
-	for my in [-380, -120, 140, 380]:
-		spawn_decor_mirror(Vector2(-528, my), 0.4)
-		spawn_decor_mirror(Vector2(528, my), 0.4)
+	# hall of mirrors — hung on the far (north) wall, clear of the gates
+	for mx in [-380, 380]:
+		spawn_decor_mirror(Vector2(mx, -470), 0.42)
 
 	spawn_sign(Vector2(-250, 360), [
 		["Sara", "The mirror pulled me in. This isn't my room."],

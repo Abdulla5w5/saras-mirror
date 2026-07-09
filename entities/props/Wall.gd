@@ -6,12 +6,16 @@ extends StaticBody2D
 ## IllusionWall, so players learn "shiny panel = maybe fake, flat stone = just wall".
 
 var wall_size := Vector2(64, 96)
+static var _tex: Texture2D
 
 
 func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 0
 	z_index = 1
+	if _tex == null:
+		_tex = SpriteSheet.load_tex("res://assets/props/wall.png")
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	var col := CollisionShape2D.new()
 	var s := RectangleShape2D.new()
 	s.size = wall_size
@@ -23,11 +27,9 @@ func _ready() -> void:
 func _draw() -> void:
 	var w := wall_size.x
 	var h := wall_size.y
-	var top := -h
-	draw_rect(Rect2(-w * 0.5, top, w, h), Color(0.09, 0.08, 0.11))
-	# rough stone seams, cheap static hatching
-	var rows := maxi(int(h / 40.0), 1)
-	for i in rows:
-		var y := top + 40.0 * i
-		draw_line(Vector2(-w * 0.5, y), Vector2(w * 0.5, y), Color(0.03, 0.03, 0.04), 2.0)
-	draw_rect(Rect2(-w * 0.5, top, w, h), Color(0.02, 0.02, 0.03), false, 3.0)
+	var r := Rect2(-w * 0.5, -h, w, h)
+	if _tex:
+		draw_texture_rect(_tex, r, true, Color(0.72, 0.7, 0.78))   # real tiled brick, dimmed to fit
+	else:
+		draw_rect(r, Color(0.12, 0.11, 0.14))
+	draw_rect(r, Color(0.02, 0.02, 0.03), false, 3.0)              # crisp dark edge

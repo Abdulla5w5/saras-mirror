@@ -17,10 +17,9 @@ func build() -> void:
 	spawn_boundary(Vector2(-600, 0), Vector2(40, 1240))
 	spawn_boundary(Vector2(600, 0), Vector2(40, 1240))
 	spawn_boundary(Vector2(0, -660), Vector2(1200, 40))
-	# mirror-hall decoration along the walls
-	for my in [-360, -80, 200, 480]:
-		spawn_decor_mirror(Vector2(-560, my), 0.4)
-		spawn_decor_mirror(Vector2(560, my), 0.4)
+	# mirror decoration on the far (north) wall, clear of the gates
+	for mx in [-420, -140, 140, 420]:
+		spawn_decor_mirror(Vector2(mx, -610), 0.4)
 	scatter_props("res://assets/props/cursed/",
 		["Veins_shadow2_1.png", "Many_eyes_plant_shadow2_1.png", "Ruins_shadow2_1.png"],
 		8, 5, 460, 560, 560, 0.6, 1.0, Color(0.8, 0.7, 1.0))
