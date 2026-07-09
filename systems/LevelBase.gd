@@ -131,6 +131,9 @@ func spawn_code_gate(line_y: float, gap_center: float, gap_w: float, code: Array
 	if right - gr > 4.0:
 		spawn_boundary(Vector2((gr + right) * 0.5, line_y), Vector2(right - gr, 220))
 	var wall := spawn_slidewall(Vector2(gap_center, line_y), Vector2(gap_w, 220), Vector2(0, -244), tint)
+	wall.texture = SpriteSheet.load_tex("res://assets/props/gate_metal.png")
+	wall.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	wall.queue_redraw()
 	var lock := CodeLock.new()
 	lock.code = code
 	lock.target = wall

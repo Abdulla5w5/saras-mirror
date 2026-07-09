@@ -16,6 +16,7 @@ var _t := 0.0
 var _dmg_cd := 0.0
 var _player: Node2D = null
 var _hint: Label
+var _tex: Texture2D = null
 
 
 func _ready() -> void:
@@ -29,6 +30,8 @@ func _ready() -> void:
 	body_entered.connect(_on_enter)
 	body_exited.connect(_on_exit)
 	z_index = -6
+	_tex = SpriteSheet.load_tex("res://assets/ground/swamp.png" if theme == "swamp" else "res://assets/ground/sand.png")
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 
 	_hint = Label.new()
 	_hint.add_theme_font_size_override("font_size", 15)
@@ -97,23 +100,30 @@ func _on_exit(b: Node) -> void:
 func _draw() -> void:
 	var w := patch_size.x
 	var h := patch_size.y
+	var r := Rect2(-w * 0.5, -h * 0.5, w, h)
 	var swamp := theme == "swamp"
-	var top_c := Color(0.14, 0.32, 0.20) if swamp else Color(0.34, 0.26, 0.13)
-	var bot_c := Color(0.05, 0.16, 0.12) if swamp else Color(0.14, 0.10, 0.05)
-	var ripple_c := Color(0.35, 0.65, 0.4, 0.4) if swamp else Color(0.5, 0.4, 0.22, 0.35)
-	var bub_c := Color(0.5, 0.8, 0.5) if swamp else Color(0.6, 0.5, 0.3)
-	var bands := 10
-	for i in bands:
-		var t := float(i) / float(bands - 1)
-		draw_rect(Rect2(-w * 0.5, -h * 0.5 + h * t, w, h / bands + 1.0), top_c.lerp(bot_c, t))
-	for i in 5:
-		var yy := -h * 0.4 + h * 0.8 * (float(i) / 4.0)
-		draw_line(Vector2(-w * 0.5, yy), Vector2(w * 0.5, yy + sin(_t * 0.7 + i)), ripple_c, 2.0)
+	var tint := Color(0.5, 0.72, 0.5) if swamp else Color(0.74, 0.58, 0.36)
+	var ripple_c := Color(0.35, 0.7, 0.42, 0.45) if swamp else Color(0.55, 0.42, 0.22, 0.4)
+	var bub_c := Color(0.5, 0.85, 0.5) if swamp else Color(0.65, 0.52, 0.3)
+	# real tiled ground texture as the base
+	if _tex:
+		draw_texture_rect(_tex, r, true, tint)
+	else:
+		draw_rect(r, tint)
+	# wet "sinking" darkening, heaviest through the middle where it's deepest
 	for i in 7:
+		var t := absf(float(i) / 6.0 - 0.5) * 2.0     # 1 at edges, 0 at centre
+		var yy := -h * 0.5 + h * (float(i) / 6.0)
+		draw_rect(Rect2(-w * 0.5, yy, w, h / 6.0 + 1), Color(0.0, 0.0, 0.0, 0.42 * (1.0 - t)))
+	# ripples + rising bubbles for life
+	for i in 5:
+		var ry := -h * 0.4 + h * 0.8 * (float(i) / 4.0)
+		draw_line(Vector2(-w * 0.5, ry), Vector2(w * 0.5, ry + sin(_t * 0.7 + i) * 3.0), ripple_c, 2.0)
+	for i in 8:
 		var bx := (hash01(i) - 0.5) * w
 		var phase := fmod(_t * 0.5 + hash01(i * 3), 1.0)
-		draw_circle(Vector2(bx, h * 0.5 - phase * h), 2.0 + hash01(i * 7) * 2.0, Color(bub_c.r, bub_c.g, bub_c.b, (1.0 - phase) * 0.4))
-	draw_rect(Rect2(-w * 0.5, -h * 0.5, w, h), Color(0.04, 0.10, 0.06, 0.7) if swamp else Color(0.08, 0.05, 0.02, 0.7), false, 3.0)
+		draw_circle(Vector2(bx, h * 0.5 - phase * h), 2.0 + hash01(i * 7) * 2.5, Color(bub_c.r, bub_c.g, bub_c.b, (1.0 - phase) * 0.5))
+	draw_rect(r, Color(0.03, 0.09, 0.05, 0.8) if swamp else Color(0.10, 0.06, 0.02, 0.8), false, 4.0)
 
 	# deployed ladder bridging the band (vertical, across the crossing)
 	if bridged:

@@ -8,6 +8,8 @@ var wall_size := Vector2(80, 180)
 var aligned_offset := Vector2(0, -200)
 var tint := Color(0.6, 0.7, 1.0)
 
+var texture: Texture2D = null   # optional real gate art (drawn instead of the slab)
+
 var _home := Vector2.ZERO
 var _tween: Tween
 
@@ -16,6 +18,8 @@ func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 0
 	z_index = 1
+	if texture:
+		texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	var col := CollisionShape2D.new()
 	var s := RectangleShape2D.new(); s.size = wall_size
 	col.shape = s
@@ -36,6 +40,12 @@ func _draw() -> void:
 	var w := wall_size.x
 	var h := wall_size.y
 	var r := Rect2(-w * 0.5, -h * 0.5, w, h)
+	if texture:
+		# stone jamb behind, then the real barred gate stretched to fill
+		draw_rect(r.grow(6), Color(0.14, 0.12, 0.16))
+		draw_texture_rect(texture, r, false)
+		draw_rect(r.grow(6), Color(0.04, 0.03, 0.05), false, 4.0)
+		return
 	for i in 8:
 		var t := float(i) / 7.0
 		draw_rect(Rect2(-w * 0.5, -h * 0.5 + h * t, w, h / 8.0 + 1), Color(0.12, 0.13, 0.2).lerp(tint * 0.7, t * 0.6))
