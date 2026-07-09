@@ -265,11 +265,8 @@ func _die() -> void:
 	await get_tree().create_timer(0.9).timeout
 	if not is_instance_valid(self):
 		return
-	hp = MAX_HP
-	Game.player_hp = hp
-	health_changed.emit(hp, MAX_HP)
-	_invuln = INVULN
-	Game.respawn_player()
+	Game.player_hp = MAX_HP
+	Game.reload_level()          # restart the level from its start
 
 func teleport_to(pos: Vector2) -> void:
 	global_position = pos
