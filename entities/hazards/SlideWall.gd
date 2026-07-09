@@ -23,6 +23,7 @@ func _ready() -> void:
 	var col := CollisionShape2D.new()
 	var s := RectangleShape2D.new(); s.size = wall_size
 	col.shape = s
+	col.position = Vector2(0, -wall_size.y * 0.5)   # base-anchored (matches Wall/IllusionWall)
 	add_child(col)
 	_home = position
 
@@ -39,7 +40,7 @@ func set_aligned(on: bool) -> void:
 func _draw() -> void:
 	var w := wall_size.x
 	var h := wall_size.y
-	var r := Rect2(-w * 0.5, -h * 0.5, w, h)
+	var r := Rect2(-w * 0.5, -h, w, h)   # base flush at origin, extends up
 	# ornate gold-framed mirror gate — clear borders, matches the mirror hall
 	draw_rect(r.grow(4), Color(0.66, 0.52, 0.26))                 # outer gold frame
 	draw_rect(r.grow(-4), Color(0.44, 0.34, 0.16))               # inner gold bevel
