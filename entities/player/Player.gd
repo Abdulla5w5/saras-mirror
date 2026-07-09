@@ -81,6 +81,7 @@ func _ready() -> void:
 	add_child(_cam)
 	_cam.make_current()
 
+	hp = clampi(Game.player_hp, 1, MAX_HP)   # carry HP over from the previous level
 	Game.register_player(self)
 	Game.set_checkpoint(global_position)
 	health_changed.emit(hp, MAX_HP)
@@ -243,6 +244,7 @@ func take_damage(amount: int, from_pos: Vector2 = global_position) -> void:
 	if _invuln > 0.0 or hp <= 0:
 		return
 	hp = maxi(hp - amount, 0)
+	Game.player_hp = hp
 	health_changed.emit(hp, MAX_HP)
 	_invuln = INVULN
 	_knockback = (global_position - from_pos).normalized() * 260.0
@@ -254,15 +256,17 @@ func take_damage(amount: int, from_pos: Vector2 = global_position) -> void:
 
 func heal(amount: int) -> void:
 	hp = mini(hp + amount, MAX_HP)
+	Game.player_hp = hp
 	health_changed.emit(hp, MAX_HP)
 
 func _die() -> void:
 	died.emit()
-	Audio.hurt()
+	Audio.death()
 	await get_tree().create_timer(0.9).timeout
 	if not is_instance_valid(self):
 		return
 	hp = MAX_HP
+	Game.player_hp = hp
 	health_changed.emit(hp, MAX_HP)
 	_invuln = INVULN
 	Game.respawn_player()
@@ -302,7 +306,8 @@ func set_sink(ratio: float) -> void:
 func _drown() -> void:
 	_sinking = true
 	set_physics_process(false)
-	Audio.hurt()
+	Game.player_hp = MAX_HP          # level restarts fresh
+	Audio.death()
 	FX.flash(Color(0.3, 0.2, 0.1), 0.4)
 	var tw := create_tween()
 	tw.tween_property(_sprite, "offset:y", 20.0, 0.8)

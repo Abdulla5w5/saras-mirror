@@ -132,6 +132,17 @@ func set_mood(root: float, fifth: float) -> void:
 	_pad_root = root
 	_pad_fifth = fifth
 
+var _voice: AudioStreamPlayer
+func death() -> void:
+	if _muted:
+		return
+	if _voice == null:
+		_voice = AudioStreamPlayer.new(); _voice.bus = "Master"; add_child(_voice)
+		if ResourceLoader.exists("res://assets/audio/death.mp3"):
+			_voice.stream = load("res://assets/audio/death.mp3")
+	if _voice.stream:
+		_voice.play()
+
 func toggle_mute() -> void:
 	_muted = not _muted
 	_mute_latch = true

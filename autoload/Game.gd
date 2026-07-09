@@ -29,6 +29,7 @@ const TITLES := {
 }
 
 var current_level: StringName = &""
+var player_hp := 5                   # persists across levels (see Player)
 var shards: Dictionary = {}          # level_id -> true
 var checkpoint: Vector2 = Vector2.ZERO
 var _player: Node = null
@@ -67,6 +68,7 @@ func respawn_player() -> void:
 
 # --- Flow -------------------------------------------------------------------
 func start_new_game() -> void:
+	player_hp = 5
 	shards.clear()
 	SaveManager.reset()
 	goto_level(ORDER[0])
