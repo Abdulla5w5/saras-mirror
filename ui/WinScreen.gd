@@ -8,6 +8,7 @@ var _light := 0.0
 var _sara: AnimatedSprite2D
 var _mom: AnimatedSprite2D
 var _fg: Control
+var _wall_mirror: MuseumMirror
 var _box: PanelContainer
 var _speaker: Label
 var _line: Label
@@ -44,11 +45,11 @@ func _ready() -> void:
 	add_child(tmr)
 
 	# whole mirror on the wall
-	var mirror := MuseumMirror.new()
-	mirror.mirror_scale = 0.6; mirror.show_stand = false
-	mirror.modulate = Color(0.5, 0.52, 0.6, 0.0)
-	mirror.position = Vector2(vp.x * 0.78, vp.y * 0.38)
-	add_child(mirror)
+	_wall_mirror = MuseumMirror.new()
+	_wall_mirror.mirror_scale = 0.6; _wall_mirror.show_stand = false
+	_wall_mirror.modulate = Color(0.5, 0.52, 0.6, 0.0)
+	_wall_mirror.position = Vector2(vp.x * 0.78, vp.y * 0.38)
+	add_child(_wall_mirror)
 
 	var cy := vp.y * 0.5
 	var by := cy + 74.0
@@ -76,12 +77,51 @@ func _ready() -> void:
 	add_child(_fg)
 
 	_build_box(vp)
+	_shard_intro(vp)
 
+
+func _begin_room() -> void:
 	var tw := create_tween()
 	tw.tween_method(func(v):
 		_light = v
-		mirror.modulate.a = v * 0.9, 0.0, 1.0, 2.0)
+		_wall_mirror.modulate.a = v * 0.9, 0.0, 1.0, 2.0)
 	tw.tween_callback(_mom_enter)
+
+
+func _shard_intro(vp: Vector2) -> void:
+	# Dark overlay: the four shards fly in and reassemble the mirror, then fade.
+	var lay := CanvasLayer.new(); lay.layer = 90; add_child(lay)
+	var dim := ColorRect.new(); dim.color = Color(0.02, 0.02, 0.05)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT); dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lay.add_child(dim)
+	var c := Vector2(vp.x * 0.5, vp.y * 0.46)
+	var mir := MuseumMirror.new(); mir.mirror_scale = 1.1; mir.glowing = false
+	mir.position = c; lay.add_child(mir)
+	var caption := Label.new(); caption.text = "Four shards. One mirror. One way home."
+	caption.set_anchors_preset(Control.PRESET_CENTER_BOTTOM); caption.offset_top = -80
+	caption.offset_left = -300; caption.offset_right = 300
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caption.add_theme_font_size_override("font_size", 20)
+	lay.add_child(caption)
+	var tw := create_tween()
+	for i in 4:
+		var sh := Polygon2D.new()
+		sh.polygon = PackedVector2Array([Vector2(0, -30), Vector2(22, 6), Vector2(4, 34), Vector2(-20, 10)])
+		sh.color = Color(0.8, 0.9, 1.0)
+		var ang := TAU * i / 4.0 + 0.4
+		sh.position = c + Vector2(cos(ang), sin(ang)) * 420.0
+		sh.rotation = ang
+		lay.add_child(sh)
+		tw.parallel().tween_property(sh, "position", c, 1.6).set_delay(i * 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		tw.parallel().tween_property(sh, "modulate:a", 0.0, 0.4).set_delay(1.4 + i * 0.25)
+	tw.chain().tween_callback(func():
+		mir.glowing = true; Audio.shard(); FX.flash(Color.WHITE, 0.5))
+	tw.tween_interval(0.7)
+	tw.tween_property(dim, "modulate:a", 0.0, 1.0)
+	tw.parallel().tween_property(mir, "modulate:a", 0.0, 1.0)
+	tw.parallel().tween_property(caption, "modulate:a", 0.0, 0.6)
+	tw.tween_callback(lay.queue_free)
+	tw.tween_callback(_begin_room)
 
 
 func _make_sprite(dir: String, scale: Vector2, feet := false) -> AnimatedSprite2D:
