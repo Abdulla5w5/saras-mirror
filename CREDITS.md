@@ -8,6 +8,7 @@ A game jam entry built for the theme **Illusion**.
 - **Enemies** — "Free Vampire Pixel Art Sprite Sheets" (Countess Vampire, Vampire Girl), CraftPix.net free license.
 - **Illusion props / rock, plant, ruin sprites** — "Free Cursed Land Top-Down Pixel Art Tileset", CraftPix.net free license.
 - **Trees** — "Free Tree Pixel Art Asset Pack", CraftPix.net free license.
+- **Desert props** (palms, rocks) — "Sketch Desert" by Kenney (kenney.nl), CC0.
 - **Gate + ground textures** (locked metal gate, sand, swamp water) — "Retro Textures: Fantasy" by Kenney (kenney.nl), CC0.
 
 CraftPix free packs require a credit/backlink to https://craftpix.net when used — included here.

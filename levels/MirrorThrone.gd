@@ -50,13 +50,14 @@ func build() -> void:
 		tint = Color(0.85, 0.88, 1.0),
 	})
 
-	# FINAL PUZZLE: the shard is walled off; a lever slides the panel aside.
+	# FINAL PUZZLE: the shard is sealed AND locked until the lever is pulled.
 	var shard := spawn_shard(Vector2(0, -470), Color(0.72, 0.78, 1.0))
+	shard.locked = true
 	var portal := spawn_portal(Vector2(0, -560), Color(0.72, 0.78, 1.0))
 	register_shard(shard, portal)
 
 	var lock := spawn_slidewall(Vector2(0, -430), Vector2(200, 90), Vector2(-260, 0), Color(0.72, 0.78, 1.0))
-	spawn_lever(Vector2(250, -380), [lock], true)
+	spawn_lever(Vector2(250, -380), [lock, shard], true)   # lever slides the wall AND unlocks the shard
 	spawn_sign(Vector2(-250, -380), [
 		["Sara", "The shard's sealed. Pull the lever to slide the glass aside."],
 	], "?")

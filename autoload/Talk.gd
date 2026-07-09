@@ -10,9 +10,9 @@ extends Node
 signal line_shown(speaker: String, text: String)
 signal queue_finished()
 
-const CPS := 34.0          # typewriter characters per second
-const HOLD := 5.0          # base seconds to hold a fully-typed line (scaled by length)
-const MIN_SHOW := 0.9      # min time before a line can be skipped
+const CPS := 42.0          # typewriter characters per second
+const HOLD := 2.2          # base seconds to hold a fully-typed line (scaled by length)
+const MIN_SHOW := 0.6      # min time before a line can be skipped
 
 var _layer: CanvasLayer
 var _panel: PanelContainer
@@ -95,7 +95,7 @@ func _process(delta: float) -> void:
 		_done_hold += delta
 		var skip := (Input.is_action_just_pressed(&"interact") or Input.is_action_just_pressed(&"attack")) and _shown > MIN_SHOW
 		# hold longer for longer lines so there's always time to read
-		if _done_hold >= HOLD + _full.length() * 0.05 or skip:
+		if _done_hold >= HOLD + _full.length() * 0.03 or skip:
 			_advance()
 
 

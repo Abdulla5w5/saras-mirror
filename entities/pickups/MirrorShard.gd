@@ -7,8 +7,13 @@ extends Area2D
 signal collected()
 
 var accent := Color(0.7, 0.85, 1.0)
+var locked := false                     # if true, can't be collected until unlocked
 var _t := 0.0
 var _taken := false
+
+## Lets a lever/switch gate the shard: set_aligned(true) unlocks it.
+func set_aligned(on: bool) -> void:
+	locked = not on
 
 
 func _ready() -> void:
@@ -29,7 +34,7 @@ func _process(delta: float) -> void:
 
 
 func _on_body(b: Node) -> void:
-	if _taken or not b.is_in_group("player"):
+	if _taken or locked or not b.is_in_group("player"):
 		return
 	_taken = true
 	Audio.shard()

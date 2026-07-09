@@ -15,10 +15,7 @@ func _ready() -> void:
 func build() -> void:
 	spawn_ground(Vector2(1360, 1200))
 	_scenery()
-	# sparse sun-bleached rocks along the margins
-	scatter_props("res://assets/props/cursed/",
-		["Rock1_shadow1_1.png", "Rock2_shadow2_1.png", "Rock3_shadow1_2.png"],
-		9, 11, 500, 640, 540, 0.8, 1.4, Color(1.0, 0.9, 0.68))
+	_desert_props()
 
 	spawn_boundary(Vector2(-680, 0), Vector2(40, 1200))
 	spawn_boundary(Vector2(680, 0), Vector2(40, 1200))
@@ -61,24 +58,79 @@ func build() -> void:
 
 
 func _scenery() -> void:
-	# code-drawn sunlit pyramids + a low sun along the north horizon (background)
 	var s := Node2D.new()
 	s.z_index = -8
 	s.draw.connect(_draw_scenery.bind(s))
 	add_child(s)
 
 func _draw_scenery(c: CanvasItem) -> void:
-	var top := bounds.position.y + 150.0
-	# hazy warm horizon band + sun
-	c.draw_rect(Rect2(bounds.position.x, bounds.position.y, bounds.size.x, 220), Color(1.0, 0.86, 0.55, 0.35))
-	c.draw_circle(Vector2(bounds.position.x + bounds.size.x * 0.7, top - 40), 70.0, Color(1.0, 0.95, 0.72, 0.7))
-	# three pyramids of varying size
-	for p in [[-360.0, top + 40, 300.0], [140.0, top - 10, 240.0], [470.0, top + 30, 200.0]]:
-		_pyramid(c, Vector2(p[0], p[1]), p[2])
+	var L := bounds.position.x
+	var W := bounds.size.x
+	var top := bounds.position.y + 160.0
+	# warm hazy horizon band
+	c.draw_rect(Rect2(L, bounds.position.y, W, 240), Color(1.0, 0.87, 0.58, 0.30))
+	# the sun — crisp disc with a soft glow + rays
+	var sun := Vector2(L + W * 0.72, top - 70.0)
+	c.draw_circle(sun, 96.0, Color(1.0, 0.92, 0.6, 0.18))
+	c.draw_circle(sun, 46.0, Color(1.0, 0.96, 0.72))
+	c.draw_circle(sun, 40.0, Color(1.0, 0.99, 0.85))
+	# rolling dune silhouettes for depth
+	for d in [[L + W * 0.15, top + 130, 320.0], [L + W * 0.6, top + 150, 380.0], [L + W * 0.9, top + 120, 300.0]]:
+		c.draw_colored_polygon(_hill(Vector2(d[0], d[1]), d[2], 70.0), Color(0.92, 0.74, 0.42))
+	# three finished pyramids at varied positions/sizes
+	_pyramid(c, Vector2(L + W * 0.24, top + 60), 300.0)
+	_pyramid(c, Vector2(L + W * 0.52, top + 10), 240.0)
+	_pyramid(c, Vector2(L + W * 0.75, top + 44), 200.0)
+
+func _hill(base: Vector2, w: float, h: float) -> PackedVector2Array:
+	var pts := PackedVector2Array()
+	var steps := 10
+	for i in steps + 1:
+		var t := float(i) / steps
+		pts.append(base + Vector2(-w * 0.5 + w * t, -sin(t * PI) * h))
+	pts.append(base + Vector2(w * 0.5, 40)); pts.append(base + Vector2(-w * 0.5, 40))
+	return pts
 
 func _pyramid(c: CanvasItem, base: Vector2, w: float) -> void:
-	var h := w * 0.78
+	var h := w * 0.8
 	var apex := base + Vector2(0, -h)
-	c.draw_colored_polygon(PackedVector2Array([apex, base + Vector2(-w * 0.5, 0), base]), Color(0.98, 0.84, 0.52))  # lit
-	c.draw_colored_polygon(PackedVector2Array([apex, base, base + Vector2(w * 0.5, 0)]), Color(0.80, 0.60, 0.32))   # shade
-	c.draw_polyline(PackedVector2Array([base + Vector2(-w * 0.5, 0), apex, base + Vector2(w * 0.5, 0)]), Color(0.55, 0.38, 0.18), 2.0)
+	# ground shadow
+	c.draw_colored_polygon(PackedVector2Array([
+		base + Vector2(-w * 0.6, 0), base + Vector2(w * 0.7, 0), base + Vector2(w * 0.5, 16), base + Vector2(-w * 0.5, 16)]),
+		Color(0.55, 0.4, 0.22, 0.35))
+	# lit + shade faces
+	c.draw_colored_polygon(PackedVector2Array([apex, base + Vector2(-w * 0.5, 0), base]), Color(1.0, 0.87, 0.55))
+	c.draw_colored_polygon(PackedVector2Array([apex, base, base + Vector2(w * 0.5, 0)]), Color(0.78, 0.58, 0.30))
+	# stepped courses (block lines)
+	for i in range(1, 6):
+		var t := float(i) / 6.0
+		var y := base.y - h * t
+		var hw := w * 0.5 * (1.0 - t)
+		c.draw_line(Vector2(base.x - hw, y), Vector2(base.x + hw, y), Color(0.5, 0.36, 0.18, 0.5), 1.5)
+	# bright capstone + edges
+	c.draw_colored_polygon(PackedVector2Array([apex, apex + Vector2(-10, 16), apex + Vector2(10, 16)]), Color(1.0, 0.96, 0.75))
+	c.draw_polyline(PackedVector2Array([base + Vector2(-w * 0.5, 0), apex, base + Vector2(w * 0.5, 0)]), Color(0.5, 0.34, 0.16), 2.0)
+	c.draw_line(apex, base, Color(0.6, 0.44, 0.22, 0.6), 1.5)   # centre ridge
+
+
+func _desert_props() -> void:
+	# real Kenney desert palms + rocks at varied positions (off the centre path)
+	var palm := SpriteSheet.load_tex("res://assets/desert/tree_S.png")
+	var rock := SpriteSheet.load_tex("res://assets/desert/rocks_S.png")
+	var layout := [
+		[palm, -560.0, -430.0, 0.5], [palm, 540.0, -360.0, 0.55], [palm, -600.0, 300.0, 0.5],
+		[palm, 600.0, 440.0, 0.48], [rock, -520.0, -80.0, 0.42], [rock, 560.0, 40.0, 0.46],
+		[rock, -580.0, 500.0, 0.44], [rock, 470.0, 520.0, 0.4], [palm, 610.0, -520.0, 0.45],
+	]
+	for it in layout:
+		var tex: Texture2D = it[0]
+		if tex == null:
+			continue
+		var spr := Sprite2D.new()
+		spr.texture = tex
+		spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		spr.scale = Vector2(it[3], it[3])
+		spr.position = Vector2(it[1], it[2])
+		spr.offset = Vector2(0, -tex.get_height() * 0.5)   # base-anchored
+		spr.z_index = int(it[2])
+		add_child(spr)
