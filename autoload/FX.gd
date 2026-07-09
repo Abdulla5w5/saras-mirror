@@ -110,6 +110,30 @@ func burst(world_pos: Vector2, color := Color(0.8, 0.7, 0.5), amount := 12, spee
 		if is_instance_valid(p):
 			p.queue_free())
 
+## A True-Sight shockwave: an expanding ring that sweeps out to `radius`,
+## making the reveal feel like a real pulse of insight (the game's core verb).
+func reveal_pulse(world_pos: Vector2, radius := 340.0) -> void:
+	var host := get_tree().current_scene
+	if host == null:
+		return
+	var ring := Line2D.new()
+	ring.width = 7.0
+	ring.default_color = Color(0.6, 0.9, 1.0, 0.9)
+	ring.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	var pts := PackedVector2Array()
+	for i in 41:
+		var a := TAU * i / 40.0
+		pts.append(Vector2(cos(a), sin(a)) * 40.0)
+	ring.points = pts
+	ring.global_position = world_pos
+	ring.z_index = 60
+	host.add_child(ring)
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(ring, "scale", Vector2.ONE * (radius / 40.0), 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(ring, "modulate:a", 0.0, 0.5)
+	tw.tween_property(ring, "width", 2.0, 0.5)
+	tw.chain().tween_callback(ring.queue_free)
+
 func illusion_break(world_pos: Vector2, color := Color(0.6, 0.85, 1.0)) -> void:
 	burst(world_pos, color, 26, 160.0)
 	add_trauma(0.28)

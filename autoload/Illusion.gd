@@ -48,7 +48,9 @@ func activate(origin: Vector2) -> bool:
 
 	Audio.reveal()
 	FX.set_true_sight_vignette(true)
-	FX.add_trauma(0.1)
+	FX.add_trauma(0.14)
+	FX.flash(Color(0.55, 0.8, 1.0), 0.22)
+	FX.reveal_pulse(origin, RADIUS)
 
 	for obj in get_tree().get_nodes_in_group("illusion"):
 		if obj is Node2D and obj.has_method("reveal"):
