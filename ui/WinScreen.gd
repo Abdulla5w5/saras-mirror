@@ -165,7 +165,7 @@ func _advance() -> void:
 		_sit_up()
 	if _box.modulate.a < 1.0:
 		create_tween().tween_property(_box, "modulate:a", 1.0, 0.4)
-	_line_t = 3.0 + 0.03 * String(l[1]).length()
+	_line_t = 5.0
 
 
 func _process(delta: float) -> void:

@@ -11,8 +11,8 @@ signal line_shown(speaker: String, text: String)
 signal queue_finished()
 
 const CPS := 42.0          # typewriter characters per second
-const HOLD := 2.2          # base seconds to hold a fully-typed line (scaled by length)
-const MIN_SHOW := 0.6      # min time before a line can be skipped
+const HOLD := 5.0          # each fully-typed line stays exactly this long, then auto-advances
+const MIN_SHOW := 0.3      # min time before E can advance early
 
 var _layer: CanvasLayer
 var _panel: PanelContainer
@@ -88,14 +88,13 @@ func _process(delta: float) -> void:
 			_done_hold = 0.0
 		else:
 			_body.text = _full.substr(0, n)
-		if Input.is_action_just_pressed(&"interact") or Input.is_action_just_pressed(&"attack"):
+		if Input.is_action_just_pressed(&"interact"):
 			if _shown > MIN_SHOW:
 				_char_t = _full.length()      # snap to full
 	else:
 		_done_hold += delta
-		var skip := (Input.is_action_just_pressed(&"interact") or Input.is_action_just_pressed(&"attack")) and _shown > MIN_SHOW
-		# hold longer for longer lines so there's always time to read
-		if _done_hold >= HOLD + _full.length() * 0.03 or skip:
+		var skip := Input.is_action_just_pressed(&"interact") and _shown > MIN_SHOW
+		if _done_hold >= HOLD or skip:
 			_advance()
 
 

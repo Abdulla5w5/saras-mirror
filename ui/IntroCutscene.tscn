@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://cintr0cutsc3n01"]
+[gd_scene format=3 uid="uid://lm5ww5is7ir5"]
 
 [ext_resource type="Script" path="res://ui/IntroCutscene.gd" id="1"]
 
