@@ -207,6 +207,8 @@ func spawn_portal(pos: Vector2, accent := Color(0.7, 0.85, 1.0)) -> Portal:
 	return p
 
 func spawn_sign(pos: Vector2, lines: Array, label := "?") -> Sign:
+	if label == "!":
+		return null            # "!" info boxes removed — felt useless
 	var s := Sign.new()
 	s.lines = lines
 	s.label_text = label
