@@ -286,6 +286,29 @@ func use_ladder() -> bool:
 		return true
 	return false
 
+var _sinking := false
+
+## Called each frame by Quicksand while wading (ratio 0..1 of the 4s sink). At 1
+## she goes under and the level restarts.
+func set_sink(ratio: float) -> void:
+	if _sinking:
+		return
+	if ratio >= 1.0:
+		_drown()
+		return
+	_sprite.offset.y = -52.0 + ratio * 40.0            # sink into the sand
+	_sprite.modulate = Color.WHITE.lerp(Color(0.5, 0.4, 0.25), ratio)
+
+func _drown() -> void:
+	_sinking = true
+	set_physics_process(false)
+	Audio.hurt()
+	FX.flash(Color(0.3, 0.2, 0.1), 0.4)
+	var tw := create_tween()
+	tw.tween_property(_sprite, "offset:y", 20.0, 0.8)
+	tw.parallel().tween_property(_sprite, "modulate:a", 0.0, 0.8)
+	tw.tween_callback(Game.reload_level)
+
 func set_camera_limits(r: Rect2) -> void:
 	if _cam == null:
 		return

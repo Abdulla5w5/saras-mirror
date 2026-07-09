@@ -110,6 +110,8 @@ func _spawn_ladder(center: Vector2, width: float, band_h: float) -> void:
 ## A swamp band with slithering snakes, crossed with the ladder (desert-style
 ## quicksand reskinned green + patrolling Snakes on the flanks).
 func spawn_swamp_crossing(center: Vector2, width: float, band_h := 200.0) -> void:
+	width = bounds.size.x                       # span wall-to-wall — no side bypass
+	center.x = bounds.position.x + width * 0.5
 	spawn_quicksand(center, Vector2(width, band_h), "swamp")
 	_spawn_ladder(center, width, band_h)
 	# snakes patrol the flanks, staying off the ladder's central strip
@@ -145,10 +147,10 @@ func spawn_code_gate(line_y: float, gap_center: float, gap_w: float, code: Array
 ## south side. Pick up the ladder (E) and press E on the sand to lay it across
 ## and walk over. `center` = band centre, `width` ≈ corridor gap.
 func spawn_shard_crossing(center: Vector2, width: float, band_h := 180.0, _unused := 6) -> void:
+	width = bounds.size.x                       # span wall-to-wall — no side bypass
+	center.x = bounds.position.x + width * 0.5
 	spawn_quicksand(center, Vector2(width, band_h))
-	var ladder := Ladder.new()
-	ladder.global_position = center + Vector2(-width * 0.26, band_h * 0.5 + 108.0)
-	add_child(ladder)
+	_spawn_ladder(center, width, band_h)
 
 func spawn_trap(pos: Vector2, size := Vector2(96, 64)) -> TrapSpikes:
 	var t := TrapSpikes.new()

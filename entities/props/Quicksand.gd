@@ -10,9 +10,11 @@ var theme := "sand"          # "sand" or "swamp"
 const SLOW_FACTOR := 0.4
 const DAMAGE_INTERVAL := 0.85
 const LADDER_HALF := 40.0    # only this central strip is safe once bridged
+const SINK_TIME := 4.0       # seconds of wading before she goes under -> restart
 
 var bridged := false
 var _t := 0.0
+var _sink := 0.0
 var _dmg_cd := 0.0
 var _player: Node2D = null
 var _hint: Label
@@ -56,13 +58,20 @@ func _process(delta: float) -> void:
 	if is_instance_valid(_player):
 		# Safe ONLY when standing on the laid ladder's central strip.
 		var on_ladder := bridged and absf(_player.global_position.x - global_position.x) <= LADDER_HALF
-		if _player.has_method("apply_slow"):
-			_player.apply_slow(1.0 if on_ladder else SLOW_FACTOR)
-		if not on_ladder and _dmg_cd <= 0.0:
-			_dmg_cd = DAMAGE_INTERVAL
-			_player.take_damage(1, _player.global_position + Vector2(0, 60))
-			FX.burst(_player.global_position, Color(0.55, 0.44, 0.24), 8, 45.0)
+		if on_ladder:
+			_sink = 0.0
+		else:
+			_sink += delta            # sinking; hit SINK_TIME and she goes under
+			if _player.has_method("apply_slow"):
+				_player.apply_slow(SLOW_FACTOR)
+			if int(_sink * 2.0) != int((_sink - delta) * 2.0):
+				FX.burst(_player.global_position, Color(0.55, 0.44, 0.24), 6, 40.0)
+		if _player.has_method("set_sink"):
+			_player.set_sink(minf(_sink / SINK_TIME, 1.0))
+		if on_ladder and _player.has_method("apply_slow"):
+			_player.apply_slow(1.0)
 
+	# enemies still just sink-die (they can't read the ladder)
 	if _dmg_cd <= 0.0:
 		for b in get_overlapping_bodies():
 			if b.is_in_group("enemy") and b.has_method("take_damage"):
@@ -92,8 +101,11 @@ func _on_enter(b: Node) -> void:
 
 func _on_exit(b: Node) -> void:
 	if b == _player:
+		_sink = 0.0
 		if _player.has_method("apply_slow"):
 			_player.apply_slow(1.0)
+		if _player.has_method("set_sink"):
+			_player.set_sink(0.0)
 		_player = null
 
 

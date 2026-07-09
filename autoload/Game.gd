@@ -114,5 +114,9 @@ func advance_level() -> void:
 	else:
 		goto_level(ORDER[i + 1])
 
+func reload_level() -> void:
+	if current_level != &"":
+		goto_level(current_level)
+
 func quit_to_menu() -> void:
 	get_tree().change_scene_to_file("res://ui/MainMenu.tscn")
