@@ -6,6 +6,7 @@ extends StaticBody2D
 ## IllusionWall, so players learn "shiny panel = maybe fake, flat stone = just wall".
 
 var wall_size := Vector2(64, 96)
+var tint := Color(0.72, 0.7, 0.78)   # set per level to match the mood
 static var _tex: Texture2D
 
 
@@ -29,7 +30,7 @@ func _draw() -> void:
 	var h := wall_size.y
 	var r := Rect2(-w * 0.5, -h, w, h)
 	if _tex:
-		draw_texture_rect(_tex, r, true, Color(0.72, 0.7, 0.78))   # real tiled brick, dimmed to fit
+		draw_texture_rect(_tex, r, true, tint)   # real tiled brick, tinted to the mood
 	else:
 		draw_rect(r, Color(0.12, 0.11, 0.14))
 	draw_rect(r, Color(0.02, 0.02, 0.03), false, 3.0)              # crisp dark edge

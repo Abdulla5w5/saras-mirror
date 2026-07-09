@@ -90,6 +90,7 @@ func spawn_wall(pos: Vector2, size: Vector2, real: bool, tint := Color(0.55, 0.6
 func spawn_boundary(pos: Vector2, size: Vector2) -> Wall:
 	var w := Wall.new()
 	w.wall_size = size
+	w.tint = (_mood.ground_c as Color).lerp(Color(1, 1, 1), 0.2)   # stone tinted to the mood
 	w.global_position = pos
 	add_child(w)
 	return w
