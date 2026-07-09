@@ -153,6 +153,7 @@ func _build() -> void:
 	sb.set_corner_radius_all(10); sb.set_content_margin_all(20)
 	panel.add_theme_stylebox_override("panel", sb)
 	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_top -= 150; panel.offset_bottom -= 150   # lift above the dialogue box
 	add_child(panel)
 	var vb := VBoxContainer.new(); vb.alignment = BoxContainer.ALIGNMENT_CENTER
 	vb.add_theme_constant_override("separation", 12); panel.add_child(vb)
