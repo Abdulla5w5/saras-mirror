@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cmirr0rthr0n3"]
+
+[ext_resource type="Script" path="res://levels/MirrorThrone.gd" id="1"]
+
+[node name="MirrorThrone" type="Node2D"]
+script = ExtResource("1")

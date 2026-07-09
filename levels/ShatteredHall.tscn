@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5h4tt3r3dh4ll1"]
+
+[ext_resource type="Script" path="res://levels/ShatteredHall.gd" id="1"]
+
+[node name="ShatteredHall" type="Node2D"]
+script = ExtResource("1")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cm1r4g3d3s3rt1"]
+
+[ext_resource type="Script" path="res://levels/MirageDesert.gd" id="1"]
+
+[node name="MirageDesert" type="Node2D"]
+script = ExtResource("1")
