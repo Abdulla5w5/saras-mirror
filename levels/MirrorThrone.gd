@@ -17,14 +17,24 @@ func build() -> void:
 	spawn_boundary(Vector2(-600, 0), Vector2(40, 1240))
 	spawn_boundary(Vector2(600, 0), Vector2(40, 1240))
 	spawn_boundary(Vector2(0, -660), Vector2(1200, 40))
+	# mirror-hall decoration along the walls
+	for my in [-360, -80, 200, 480]:
+		spawn_decor_mirror(Vector2(-560, my), 0.4)
+		spawn_decor_mirror(Vector2(560, my), 0.4)
+	scatter_props("res://assets/props/cursed/",
+		["Veins_shadow2_1.png", "Many_eyes_plant_shadow2_1.png", "Ruins_shadow2_1.png"],
+		8, 5, 460, 560, 560, 0.6, 1.0, Color(0.8, 0.7, 1.0))
 
-	spawn_sign(Vector2(-250, 420), [
-		["Sara", "One shard left. Time the blinking gates and run through."],
+	spawn_sign(Vector2(-250, 470), [
+		["Sara", "One shard left. The floor here is a lie — Q shows the safe steps."],
 	], "!")
 
-	# Approach: a crumbling glass bridge (keep moving) flanked by spike traps.
-	spawn_crumble_bridge(Vector2(-150, 380), Vector2(150, 380), 6, Vector2(80, 90))
-	spawn_trap(Vector2(-360, 250), Vector2(150, 90))
+	# ILLUSION FLOOR: hidden spike tiles the player must read with True Sight and
+	# weave between the gaps. Replaces the old crumbling bridge.
+	for tx in [-320, -160, 0, 160, 320]:
+		spawn_trap(Vector2(tx, 380), Vector2(96, 96))
+	for tx in [-240, -80, 80, 240]:
+		spawn_trap(Vector2(tx, 250), Vector2(96, 96))
 	spawn_trap(Vector2(360, 250), Vector2(150, 90))
 
 	# PHASE-GATE GAUNTLET: two horizontal light-walls with different rhythms.

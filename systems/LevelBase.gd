@@ -296,6 +296,15 @@ func scatter_props(dir: String, names: Array, count: int, rng_seed: int,
 		s.z_index = int(s.position.y) - 30
 		add_child(s)
 
+## A non-interactive ornate mirror hung as wall decoration.
+func spawn_decor_mirror(pos: Vector2, scale := 0.42) -> void:
+	var m := MuseumMirror.new()
+	m.mirror_scale = scale
+	m.show_stand = false
+	m.global_position = pos
+	m.z_index = int(pos.y) - 40
+	add_child(m)
+
 func spawn_prop(pos: Vector2, texture: Texture2D, scale := Vector2.ONE, y_offset := 0.0) -> Sprite2D:
 	var s := Sprite2D.new()
 	s.texture = texture

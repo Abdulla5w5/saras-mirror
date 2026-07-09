@@ -18,6 +18,9 @@ func build() -> void:
 	scatter_props("res://assets/props/cursed/",
 		["Rock1_shadow1_1.png", "Ruins_shadow2_1.png", "Bones_shadow1_1.png", "Rock2_shadow2_1.png"],
 		10, 7, 470, 610, 480, 0.7, 1.1)
+	scatter_props("res://assets/props/cursed/",
+		["Eye_plant_shadow1_1.png", "Tentacle_plant_shadow1_1.png", "Meat_flower_shadow1_1.png", "Many_eyes_plant_shadow1_1.png", "Veins_shadow1_1.png"],
+		12, 19, 300, 600, 490, 0.7, 1.2)
 
 	spawn_boundary(Vector2(-650, 0), Vector2(40, 1050))
 	spawn_boundary(Vector2(650, 0), Vector2(40, 1050))
