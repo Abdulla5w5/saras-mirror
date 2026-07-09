@@ -114,19 +114,21 @@ func _draw() -> void:
 	var h := patch_size.y
 	var r := Rect2(-w * 0.5, -h * 0.5, w, h)
 	var swamp := theme == "swamp"
-	var tint := Color(0.5, 0.72, 0.5) if swamp else Color(0.74, 0.58, 0.36)
-	var ripple_c := Color(0.35, 0.7, 0.42, 0.45) if swamp else Color(0.55, 0.42, 0.22, 0.4)
-	var bub_c := Color(0.5, 0.85, 0.5) if swamp else Color(0.65, 0.52, 0.3)
+	var tint := Color(0.5, 0.72, 0.5) if swamp else Color(0.95, 0.78, 0.46)
+	var deep := Color(0.04, 0.12, 0.07) if swamp else Color(0.46, 0.28, 0.10)  # warm, not black
+	var deep_a := 0.5 if swamp else 0.34
+	var ripple_c := Color(0.35, 0.7, 0.42, 0.45) if swamp else Color(0.75, 0.58, 0.30, 0.5)
+	var bub_c := Color(0.5, 0.85, 0.5) if swamp else Color(0.85, 0.70, 0.42)
 	# real tiled ground texture as the base
 	if _tex:
 		draw_texture_rect(_tex, r, true, tint)
 	else:
 		draw_rect(r, tint)
-	# wet "sinking" darkening, heaviest through the middle where it's deepest
+	# "sinking" darkening, heaviest through the middle where it's deepest
 	for i in 7:
 		var t := absf(float(i) / 6.0 - 0.5) * 2.0     # 1 at edges, 0 at centre
 		var yy := -h * 0.5 + h * (float(i) / 6.0)
-		draw_rect(Rect2(-w * 0.5, yy, w, h / 6.0 + 1), Color(0.0, 0.0, 0.0, 0.42 * (1.0 - t)))
+		draw_rect(Rect2(-w * 0.5, yy, w, h / 6.0 + 1), Color(deep.r, deep.g, deep.b, deep_a * (1.0 - t)))
 	# ripples + rising bubbles for life
 	for i in 5:
 		var ry := -h * 0.4 + h * 0.8 * (float(i) / 4.0)

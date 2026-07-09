@@ -40,13 +40,19 @@ func _draw() -> void:
 	var w := wall_size.x
 	var h := wall_size.y
 	var r := Rect2(-w * 0.5, -h * 0.5, w, h)
-	if texture:
-		# stone jamb behind, then the real barred gate stretched to fill
-		draw_rect(r.grow(6), Color(0.14, 0.12, 0.16))
-		draw_texture_rect(texture, r, false)
-		draw_rect(r.grow(6), Color(0.04, 0.03, 0.05), false, 4.0)
-		return
-	for i in 8:
-		var t := float(i) / 7.0
-		draw_rect(Rect2(-w * 0.5, -h * 0.5 + h * t, w, h / 8.0 + 1), Color(0.12, 0.13, 0.2).lerp(tint * 0.7, t * 0.6))
-	draw_rect(r, Color(0.02, 0.02, 0.05), false, 3.0)
+	# ornate gold-framed mirror gate — clear borders, matches the mirror hall
+	draw_rect(r.grow(4), Color(0.66, 0.52, 0.26))                 # outer gold frame
+	draw_rect(r.grow(-4), Color(0.44, 0.34, 0.16))               # inner gold bevel
+	var glass := r.grow(-14)
+	draw_rect(glass, Color(0.10, 0.10, 0.18).lerp(tint * 0.4, 0.4))  # dark reflective panel
+	# vertical light bars down the glass
+	var bars := 4
+	for i in bars:
+		var bx := glass.position.x + glass.size.x * (float(i) + 0.5) / bars
+		draw_rect(Rect2(bx - 3, glass.position.y + 6, 6, glass.size.y - 12), Color(tint.r, tint.g, tint.b, 0.35))
+	# central medallion
+	var c := r.get_center()
+	draw_circle(c, 16.0, Color(0.66, 0.52, 0.26))
+	draw_circle(c, 11.0, Color(0.9, 0.95, 1.0, 0.8))
+	# crisp outline
+	draw_rect(r.grow(4), Color(0.03, 0.02, 0.05), false, 3.0)

@@ -14,11 +14,11 @@ func _ready() -> void:
 
 func build() -> void:
 	spawn_ground(Vector2(1360, 1200))
-	# sparse sun-bleached rocks along the margins (desert-appropriate, unlike the
-	# old random tileset scatter)
+	_scenery()
+	# sparse sun-bleached rocks along the margins
 	scatter_props("res://assets/props/cursed/",
 		["Rock1_shadow1_1.png", "Rock2_shadow2_1.png", "Rock3_shadow1_2.png"],
-		9, 11, 500, 640, 540, 0.8, 1.4, Color(0.95, 0.85, 0.62))
+		9, 11, 500, 640, 540, 0.8, 1.4, Color(1.0, 0.9, 0.68))
 
 	spawn_boundary(Vector2(-680, 0), Vector2(40, 1200))
 	spawn_boundary(Vector2(680, 0), Vector2(40, 1200))
@@ -58,3 +58,27 @@ func build() -> void:
 	var shard := spawn_shard(Vector2(0, -440), Color(0.95, 0.85, 0.55))
 	var portal := spawn_portal(Vector2(0, -520), Color(0.95, 0.85, 0.55))
 	register_shard(shard, portal)
+
+
+func _scenery() -> void:
+	# code-drawn sunlit pyramids + a low sun along the north horizon (background)
+	var s := Node2D.new()
+	s.z_index = -8
+	s.draw.connect(_draw_scenery.bind(s))
+	add_child(s)
+
+func _draw_scenery(c: CanvasItem) -> void:
+	var top := bounds.position.y + 150.0
+	# hazy warm horizon band + sun
+	c.draw_rect(Rect2(bounds.position.x, bounds.position.y, bounds.size.x, 220), Color(1.0, 0.86, 0.55, 0.35))
+	c.draw_circle(Vector2(bounds.position.x + bounds.size.x * 0.7, top - 40), 70.0, Color(1.0, 0.95, 0.72, 0.7))
+	# three pyramids of varying size
+	for p in [[-360.0, top + 40, 300.0], [140.0, top - 10, 240.0], [470.0, top + 30, 200.0]]:
+		_pyramid(c, Vector2(p[0], p[1]), p[2])
+
+func _pyramid(c: CanvasItem, base: Vector2, w: float) -> void:
+	var h := w * 0.78
+	var apex := base + Vector2(0, -h)
+	c.draw_colored_polygon(PackedVector2Array([apex, base + Vector2(-w * 0.5, 0), base]), Color(0.98, 0.84, 0.52))  # lit
+	c.draw_colored_polygon(PackedVector2Array([apex, base, base + Vector2(w * 0.5, 0)]), Color(0.80, 0.60, 0.32))   # shade
+	c.draw_polyline(PackedVector2Array([base + Vector2(-w * 0.5, 0), apex, base + Vector2(w * 0.5, 0)]), Color(0.55, 0.38, 0.18), 2.0)

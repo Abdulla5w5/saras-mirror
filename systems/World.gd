@@ -21,10 +21,10 @@ const MOODS := {
 		shimmer = 0.7, pad_root = 98.0, pad_fifth = 146.83,
 	},
 	&"mirage_desert": {
-		clear = Color(0.16, 0.13, 0.24),
-		ground_a = Color(0.74, 0.48, 0.20), ground_b = Color(0.92, 0.68, 0.30),
-		ground_c = Color(0.98, 0.82, 0.44), accent = Color(0.30, 0.86, 0.86),
-		shimmer = 2.0, pad_root = 130.81, pad_fifth = 196.0,
+		clear = Color(0.60, 0.72, 0.90),                                # warm daylight sky
+		ground_a = Color(0.88, 0.66, 0.34), ground_b = Color(0.96, 0.80, 0.44),
+		ground_c = Color(1.0, 0.92, 0.62), accent = Color(1.0, 0.85, 0.45),
+		shimmer = 2.0, vignette = 0.28, pad_root = 130.81, pad_fifth = 196.0,
 	},
 	&"mirror_throne": {
 		clear = Color(0.12, 0.06, 0.20),
