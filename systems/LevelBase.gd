@@ -121,6 +121,24 @@ func spawn_swamp_crossing(center: Vector2, width: float, band_h := 200.0) -> voi
 		snake.global_position = center + Vector2(s * width * 0.30, 0)
 		add_child(snake)
 
+## Funnel walls + a low gate across a corridor, guarded by a Frog you must beat
+## at Connect Four to open. A short, comedic gate.
+func spawn_frog_gate(line_y: float, gap_center: float, gap_w: float, tint := Color(0.5, 0.9, 0.5)) -> void:
+	var left := bounds.position.x
+	var right := bounds.position.x + bounds.size.x
+	var gl := gap_center - gap_w * 0.5
+	var gr := gap_center + gap_w * 0.5
+	var wh := 120.0
+	if gl - left > 4.0:
+		spawn_boundary(Vector2((left + gl) * 0.5, line_y), Vector2(gl - left, wh))
+	if right - gr > 4.0:
+		spawn_boundary(Vector2((gr + right) * 0.5, line_y), Vector2(right - gr, wh))
+	var wall := spawn_slidewall(Vector2(gap_center, line_y), Vector2(gap_w, wh), Vector2(0, -wh - 40), tint)
+	var frog := Frog.new()
+	frog.target = wall
+	frog.global_position = Vector2(gr + 60.0, line_y + 26.0)
+	add_child(frog)
+
 ## Funnel walls + a locked SlideWall across a corridor, opened by a CodeLock.
 func spawn_code_gate(line_y: float, gap_center: float, gap_w: float, code: Array,
 		tint := Color(0.55, 0.68, 1.0)) -> void:

@@ -23,11 +23,14 @@ func build() -> void:
 	spawn_boundary(Vector2(650, 0), Vector2(40, 1050))
 	spawn_boundary(Vector2(0, -545), Vector2(1300, 40))
 
-	spawn_sign(Vector2(-250, 380), [
-		["Sara", "A snake-filled swamp. I'll lay the ladder and cross above them."],
+	spawn_sign(Vector2(-250, 470), [
+		["Sara", "A frog. Wearing a crown. It won't let me past without a game."],
 	], "!")
 
-	# A snake-infested swamp — grab the ladder, lay it across, walk over the snakes.
+	# STAGE 1: a frog blocks the path — beat it at Connect Four to open the gate.
+	spawn_frog_gate(430.0, 0.0, 240.0)
+
+	# STAGE 2: a snake-infested swamp — lay the ladder, walk over the snakes.
 	spawn_swamp_crossing(Vector2(0, 70), 1180.0, 220.0)
 
 	# THE GATE: four hedge panels, only #2 is the true gap.
