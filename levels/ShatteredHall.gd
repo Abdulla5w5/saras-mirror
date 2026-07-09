@@ -10,6 +10,7 @@ func _ready() -> void:
 	bounds = Rect2(-560, -500, 1120, 1000)
 	player_start = Vector2(0, 420)
 	super._ready()
+	show_toast("WASD move  ·  Q True Sight reveals illusions  ·  E interact  ·  J strike")
 
 
 func build() -> void:

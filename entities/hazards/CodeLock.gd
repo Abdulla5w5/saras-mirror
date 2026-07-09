@@ -28,7 +28,7 @@ func _ready() -> void:
 	collision_layer = 4
 	collision_mask = 2
 	var c := CollisionShape2D.new()
-	var s := CircleShape2D.new(); s.radius = 46.0
+	var s := CircleShape2D.new(); s.radius = 80.0   # reachable from the door base below
 	c.shape = s
 	add_child(c)
 	body_entered.connect(func(b): if b.is_in_group("player") and not _solved: _hint.visible = true)

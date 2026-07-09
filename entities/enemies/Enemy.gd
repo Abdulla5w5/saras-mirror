@@ -18,6 +18,7 @@ var aggro_range := 240.0
 var give_up_range := 460.0
 var contact_damage := 1
 var tint := Color(1, 1, 1)
+var is_boss := false                       # bigger death payoff (hit-stop)
 var patrol_points: Array = []              # optional Vector2 waypoints (world)
 
 # --- state ------------------------------------------------------------------
@@ -187,6 +188,10 @@ func _die() -> void:
 	_touch.queue_free()
 	_play("dead")
 	FX.illusion_break(global_position + Vector2(0, -24), Color(0.7, 0.8, 1.0))
+	if is_boss:                                   # climax beat
+		FX.hit_pause(0.16, 0.05)
+		FX.flash(Color(0.9, 0.95, 1.0), 0.5)
+		FX.add_trauma(0.6)
 	var line: String = defeat_lines[randi() % defeat_lines.size()] if not defeat_lines.is_empty() else ""
 	if line != "":
 		Talk.say(speaker, line, Color(0.7, 0.8, 1.0))

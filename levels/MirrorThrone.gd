@@ -56,7 +56,7 @@ func build() -> void:
 			"...go, then. Wake up.",
 		],
 		max_hp = 7, move_speed = 145.0, aggro_range = 340.0, give_up_range = 800.0,
-		tint = Color(0.85, 0.88, 1.0),
+		is_boss = true, tint = Color(0.85, 0.88, 1.0),
 	})
 
 	# FINAL PUZZLE: the shard is sealed AND locked until the lever is pulled.

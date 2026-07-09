@@ -155,7 +155,7 @@ func spawn_code_gate(line_y: float, gap_center: float, gap_w: float, code: Array
 	lock.code = code
 	lock.target = wall
 	lock.accent = tint
-	lock.global_position = Vector2(gr + 66.0, line_y + 30.0)
+	lock.global_position = Vector2(gap_center, line_y - 40.0)   # the dial sits ON the door
 	add_child(lock)
 
 ## A wide quicksand band spanning a corridor, plus a Ladder lying nearby on the
@@ -314,6 +314,27 @@ func spawn_prop(pos: Vector2, texture: Texture2D, scale := Vector2.ONE, y_offset
 	add_child(s)
 	return s
 
+
+## A one-line banner that fades in near the top, holds, then fades out.
+func show_toast(text: String, hold := 5.0) -> void:
+	var layer := CanvasLayer.new(); layer.layer = 72
+	add_child(layer)
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.add_theme_font_size_override("font_size", 20)
+	lbl.add_theme_color_override("font_color", Color(0.85, 0.92, 1.0))
+	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+	lbl.add_theme_constant_override("outline_size", 6)
+	lbl.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	lbl.offset_top = 90
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.modulate.a = 0.0
+	layer.add_child(lbl)
+	var tw := create_tween()
+	tw.tween_property(lbl, "modulate:a", 1.0, 0.6)
+	tw.tween_interval(hold)
+	tw.tween_property(lbl, "modulate:a", 0.0, 0.8)
+	tw.tween_callback(layer.queue_free)
 
 func _show_intro_card() -> void:
 	var layer := CanvasLayer.new()

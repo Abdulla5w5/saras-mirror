@@ -51,7 +51,7 @@ func _ready() -> void:
 
 	if SaveManager.has_progress():
 		vb.add_child(_button("Continue", func(): Audio.ui(); Game.continue_game()))
-	vb.add_child(_button("New Game", func(): Audio.ui(); Game.start_new_game()))
+	vb.add_child(_button("New Game", func(): Audio.ui(); get_tree().change_scene_to_file("res://ui/IntroCutscene.tscn")))
 	vb.add_child(_button("Quit", func(): Audio.ui(); get_tree().quit()))
 
 	var hint := Label.new()
