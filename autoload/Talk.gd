@@ -94,7 +94,7 @@ func _process(delta: float) -> void:
 	else:
 		_done_hold += delta
 		var skip := Input.is_action_just_pressed(&"interact") and _shown > MIN_SHOW
-		if _done_hold >= HOLD or skip:
+		if _done_hold >= (6.0 if _full.length() > 60 else HOLD) or skip:
 			_advance()
 
 
