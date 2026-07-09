@@ -129,14 +129,24 @@ func _draw() -> void:
 		var t := absf(float(i) / 6.0 - 0.5) * 2.0     # 1 at edges, 0 at centre
 		var yy := -h * 0.5 + h * (float(i) / 6.0)
 		draw_rect(Rect2(-w * 0.5, yy, w, h / 6.0 + 1), Color(deep.r, deep.g, deep.b, deep_a * (1.0 - t)))
-	# ripples + rising bubbles for life
-	for i in 5:
-		var ry := -h * 0.4 + h * 0.8 * (float(i) / 4.0)
-		draw_line(Vector2(-w * 0.5, ry), Vector2(w * 0.5, ry + sin(_t * 0.7 + i) * 3.0), ripple_c, 2.0)
-	for i in 8:
-		var bx := (hash01(i) - 0.5) * w
-		var phase := fmod(_t * 0.5 + hash01(i * 3), 1.0)
-		draw_circle(Vector2(bx, h * 0.5 - phase * h), 2.0 + hash01(i * 7) * 2.5, Color(bub_c.r, bub_c.g, bub_c.b, (1.0 - phase) * 0.5))
+	if swamp:
+		# water ripples + rising bubbles
+		for i in 5:
+			var ry := -h * 0.4 + h * 0.8 * (float(i) / 4.0)
+			draw_line(Vector2(-w * 0.5, ry), Vector2(w * 0.5, ry + sin(_t * 0.7 + i) * 3.0), ripple_c, 2.0)
+		for i in 8:
+			var bx := (hash01(i) - 0.5) * w
+			var phase := fmod(_t * 0.5 + hash01(i * 3), 1.0)
+			draw_circle(Vector2(bx, h * 0.5 - phase * h), 2.0 + hash01(i * 7) * 2.5, Color(bub_c.r, bub_c.g, bub_c.b, (1.0 - phase) * 0.5))
+	else:
+		# slow-turning sinkhole rings + drifting sand grains (no water bubbles)
+		for i in range(1, 5):
+			var rr := i * (h * 0.11)
+			draw_arc(Vector2.ZERO, rr, _t * 0.4 + i, _t * 0.4 + i + PI * 1.5, 20, Color(0.55, 0.4, 0.2, 0.35), 2.0)
+		for i in 26:
+			var gx := (hash01(i) - 0.5) * w
+			var gy := (hash01(i * 5) - 0.5) * h
+			draw_circle(Vector2(gx, gy), 1.0 + hash01(i * 9), Color(0.8, 0.66, 0.4, 0.5))
 	draw_rect(r, Color(0.03, 0.09, 0.05, 0.8) if swamp else Color(0.10, 0.06, 0.02, 0.8), false, 4.0)
 
 	# deployed ladder bridging the band (vertical, across the crossing)

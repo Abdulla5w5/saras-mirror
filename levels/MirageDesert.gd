@@ -31,6 +31,9 @@ func build() -> void:
 	# is fatal.
 	spawn_shard_crossing(Vector2(0, 190), 1300.0, 320.0, 8)
 
+	# A wise camel bars the way with a riddle (type the answer) before the sands.
+	spawn_camel_gate(430.0, 0.0, 240.0)
+
 	# THE GATE: three mirage-cliffs, only the centre is a true gap.
 	spawn_gate_line(-40, 0, 320, 3, 1, Color(0.95, 0.85, 0.55))
 

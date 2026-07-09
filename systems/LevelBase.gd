@@ -139,6 +139,23 @@ func spawn_frog_gate(line_y: float, gap_center: float, gap_w: float, tint := Col
 	frog.global_position = Vector2(gr + 60.0, line_y + 26.0)
 	add_child(frog)
 
+## Funnel walls + a low gate guarded by a Camel whose typed riddle opens it.
+func spawn_camel_gate(line_y: float, gap_center: float, gap_w: float, tint := Color(0.95, 0.82, 0.45)) -> void:
+	var left := bounds.position.x
+	var right := bounds.position.x + bounds.size.x
+	var gl := gap_center - gap_w * 0.5
+	var gr := gap_center + gap_w * 0.5
+	var wh := 120.0
+	if gl - left > 4.0:
+		spawn_boundary(Vector2((left + gl) * 0.5, line_y), Vector2(gl - left, wh))
+	if right - gr > 4.0:
+		spawn_boundary(Vector2((gr + right) * 0.5, line_y), Vector2(right - gr, wh))
+	var wall := spawn_slidewall(Vector2(gap_center, line_y), Vector2(gap_w, wh), Vector2(0, -wh - 40), tint)
+	var camel := Camel.new()
+	camel.target = wall
+	camel.global_position = Vector2(gr + 60.0, line_y + 26.0)
+	add_child(camel)
+
 ## Funnel walls + a locked SlideWall across a corridor, opened by a CodeLock.
 func spawn_code_gate(line_y: float, gap_center: float, gap_w: float, code: Array,
 		tint := Color(0.55, 0.68, 1.0)) -> void:
