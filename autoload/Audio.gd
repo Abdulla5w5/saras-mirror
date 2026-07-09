@@ -10,6 +10,7 @@ extends Node
 const MIX_RATE := 44100.0
 
 var _player: AudioStreamPlayer
+var _bg: AudioStreamPlayer
 var _pb: AudioStreamGeneratorPlayback
 var _voices: Array = []            # each: {freq, phase, t, dur, type, vol, sweep}
 var _muted := false
@@ -35,12 +36,27 @@ func _ready() -> void:
 	_player.play()
 	_pb = _player.get_stream_playback()
 
+	# Looping background track (replaces the synth pad).
+	_music_on = false
+	if ResourceLoader.exists("res://assets/audio/music.mp3"):
+		var s = load("res://assets/audio/music.mp3")
+		if s is AudioStreamMP3:
+			s.loop = true
+		_bg = AudioStreamPlayer.new()
+		_bg.stream = s
+		_bg.bus = "Master"
+		_bg.volume_db = -14.0
+		add_child(_bg)
+		_bg.play()
+
 
 func _process(delta: float) -> void:
 	if Input.is_key_pressed(KEY_M) and not _mute_latch:
 		toggle_mute()
 	if not Input.is_key_pressed(KEY_M):
 		_mute_latch = false
+	if _bg:
+		_bg.stream_paused = _muted
 
 	_music_t += delta
 	# Schedule a soft pad note roughly every 2.4s while music is on.
