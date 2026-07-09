@@ -28,3 +28,7 @@ runtime, no audio files), and procedural VFX/shaders were built for this jam.
 ## Engine
 
 Godot Engine 4.6.
+
+## Music
+
+- **Music** — "Resonant Illusions" by Psychronic Games (free to use).
