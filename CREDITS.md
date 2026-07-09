@@ -31,4 +31,4 @@ Godot Engine 4.6.
 
 ## Music
 
-- **Music** — "Resonant Illusions" by Psychronic Games (free to use).
+- **Music** — "Theater of Illusions (Unstopping Noise)" from Chaos Zero Nightmare OST by Artis4.
