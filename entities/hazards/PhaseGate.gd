@@ -45,19 +45,35 @@ func _closing_soon() -> bool:
 	return not _solid and c > (solid_time + open_time - 0.5)
 
 
+# One upright mirror shard (a tall thin diamond) centred at x=cx.
+func _shard(cx: float, sw: float, hh: float) -> PackedVector2Array:
+	return PackedVector2Array([
+		Vector2(cx, -hh), Vector2(cx + sw, 0), Vector2(cx, hh), Vector2(cx - sw, 0)])
+
 func _draw() -> void:
 	var w := gate_size.x
 	var h := gate_size.y
-	var r := Rect2(-w * 0.5, -h * 0.5, w, h)
+	var hw := w * 0.5
+	var hh := h * 0.5
+	var r := Rect2(-hw, -hh, w, h)
+	var n: int = max(3, int(w / 18.0))
+	var sw := w / n * 0.44
 	if _solid:
-		# energy wall of vertical mirror bars
-		for i in int(h / 16.0):
-			var y := -h * 0.5 + i * 16.0
-			var a := 0.7 + 0.3 * sin(_t * 6.0 + i)
-			draw_rect(Rect2(-w * 0.5, y, w, 14), Color(tint.r, tint.g, tint.b, a * 0.8))
+		# a shimmering curtain of upright mirror shards spanning the gap
+		for i in n:
+			var cx := -hw + w * (float(i) + 0.5) / n
+			var a := 0.6 + 0.4 * sin(_t * 6.0 + float(i) * 0.9)
+			draw_colored_polygon(_shard(cx, sw, hh), Color(tint.r, tint.g, tint.b, a * 0.85))
+		# bright framing rails top & bottom
+		draw_rect(Rect2(-hw, -hh - 1.0, w, 3.0), Color(0.95, 0.98, 1.0, 0.9))
+		draw_rect(Rect2(-hw, hh - 2.0, w, 3.0), Color(0.95, 0.98, 1.0, 0.9))
 		draw_rect(r, Color(1, 1, 1, 0.5), false, 2.0)
 	else:
+		# open: faint shard ghosts keep the gate readable; red pulse warns of closing
 		var warn := _closing_soon()
-		var a := (0.5 + 0.5 * sin(_t * 24.0)) if warn else 0.14
+		var base := (0.5 + 0.5 * sin(_t * 24.0)) if warn else 0.12
 		var col := Color(1.0, 0.6, 0.5) if warn else tint
-		draw_rect(r, Color(col.r, col.g, col.b, a * 0.5), false, 2.0)
+		for i in n:
+			var cx := -hw + w * (float(i) + 0.5) / n
+			draw_colored_polygon(_shard(cx, sw, hh), Color(col.r, col.g, col.b, base * 0.4))
+		draw_rect(r, Color(col.r, col.g, col.b, base * 0.6), false, 2.0)

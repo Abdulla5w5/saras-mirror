@@ -320,6 +320,54 @@ func scatter_props(dir: String, names: Array, count: int, rng_seed: int,
 		s.z_index = int(s.position.y) - 30
 		add_child(s)
 
+## Strew small ground-detail decals (cracks/pebbles cut from a sheet) across the
+## whole floor so it reads as a real, worn surface instead of empty ground.
+## `regions` are AtlasTexture rects into `sheet`; kept low-alpha, behind the player.
+func scatter_floor_decals(sheet: Texture2D, regions: Array, count: int, rng_seed: int,
+		tint := Color(1, 1, 1, 0.4), s_min := 0.7, s_max := 1.6) -> void:
+	if sheet == null:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = rng_seed
+	var m := 80.0
+	for i in count:
+		var r: Rect2 = regions[i % regions.size()]
+		var at := AtlasTexture.new()
+		at.atlas = sheet
+		at.region = r
+		var s := Sprite2D.new()
+		s.texture = at
+		s.modulate = tint
+		var sc := rng.randf_range(s_min, s_max)
+		s.scale = Vector2(sc, sc)
+		s.rotation = rng.randf_range(0.0, TAU)
+		s.position = Vector2(
+			rng.randf_range(bounds.position.x + m, bounds.position.x + bounds.size.x - m),
+			rng.randf_range(bounds.position.y + m, bounds.position.y + bounds.size.y - m))
+		s.z_index = -9   # above ground (-10), below the player
+		add_child(s)
+
+## Scatter small code-drawn mirror shards over the floor — bright accent slivers
+## that catch the bloom, giving the Shattered Hall its broken-glass identity.
+func scatter_mirror_shards(count: int, rng_seed: int, accent: Color) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = rng_seed
+	var m := 90.0
+	for i in count:
+		var w := rng.randf_range(9.0, 20.0)
+		var h := rng.randf_range(16.0, 34.0)
+		var poly := Polygon2D.new()
+		poly.polygon = PackedVector2Array([
+			Vector2(0, -h * 0.5), Vector2(w * 0.4, h * 0.1),
+			Vector2(-w * 0.2, h * 0.5), Vector2(-w * 0.5, -h * 0.1)])
+		poly.color = Color(accent.r, accent.g, accent.b, rng.randf_range(0.22, 0.5))
+		poly.rotation = rng.randf_range(0.0, TAU)
+		poly.position = Vector2(
+			rng.randf_range(bounds.position.x + m, bounds.position.x + bounds.size.x - m),
+			rng.randf_range(bounds.position.y + m, bounds.position.y + bounds.size.y - m))
+		poly.z_index = -9
+		add_child(poly)
+
 ## A non-interactive ornate mirror hung as wall decoration.
 func spawn_decor_mirror(pos: Vector2, scale := 0.42) -> void:
 	var m := MuseumMirror.new()

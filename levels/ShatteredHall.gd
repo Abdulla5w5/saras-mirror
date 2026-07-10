@@ -15,6 +15,13 @@ func _ready() -> void:
 
 func build() -> void:
 	spawn_ground(Vector2(1120, 1000))
+	# Worn-floor richness: cracks/pebbles strewn across the ground, plus glinting
+	# mirror shards that give the Shattered Hall its broken-glass identity.
+	scatter_floor_decals(SpriteSheet.load_tex("res://assets/ground/details.png"),
+		[Rect2(4, 4, 26, 26), Rect2(30, 40, 42, 30), Rect2(70, 94, 30, 28),
+		Rect2(116, 116, 44, 22), Rect2(94, 96, 26, 26), Rect2(8, 52, 34, 34)],
+		28, 1011, Color(0.55, 0.8, 1.0, 0.32))
+	scatter_mirror_shards(20, 2022, _mood.accent)
 
 	# Outer boundary.
 	spawn_boundary(Vector2(-560, -60), Vector2(40, 1000))
