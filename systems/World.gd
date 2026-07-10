@@ -91,6 +91,23 @@ static func make_ground_material(m: Dictionary, tiling: float) -> ShaderMaterial
 	mat.set_shader_parameter("shimmer", m.shimmer)
 	return mat
 
+## A dreamy bloom environment (2D canvas glow) so accent glints, shards, portals
+## and the ambient motes softly light up — sells the "illusion" without art.
+static func make_environment(_m: Dictionary) -> Environment:
+	var env := Environment.new()
+	env.background_mode = Environment.BG_CANVAS
+	env.glow_enabled = true
+	env.glow_intensity = 0.7
+	env.glow_strength = 1.1
+	env.glow_bloom = 0.1
+	env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SCREEN
+	env.glow_hdr_threshold = 0.95      # only the brightest pixels bloom
+	env.glow_hdr_scale = 2.0
+	env.set_glow_level(2, 1.0)
+	env.set_glow_level(3, 1.0)
+	env.set_glow_level(4, 0.5)
+	return env
+
 static func make_vignette_material(m: Dictionary, strength := 0.55) -> ShaderMaterial:
 	var sh := Shader.new()
 	sh.code = VIGNETTE_SHADER

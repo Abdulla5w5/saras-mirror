@@ -21,6 +21,10 @@ func _ready() -> void:
 	RenderingServer.set_default_clear_color(_mood.clear)
 	Audio.set_mood(_mood.pad_root, _mood.pad_fifth)
 
+	var we := WorldEnvironment.new()   # dreamy 2D bloom over the whole world
+	we.environment = World.make_environment(_mood)
+	add_child(we)
+
 	_build_ground()
 	build()  # subclass fills the room
 	_build_vignette()
