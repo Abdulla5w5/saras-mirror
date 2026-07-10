@@ -17,7 +17,7 @@ var _tween: Tween
 func _ready() -> void:
 	collision_layer = 1
 	collision_mask = 0
-	z_index = 1
+	z_index = -1   # draw behind Sara so she reads as standing in front, not under
 	if texture:
 		texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	var col := CollisionShape2D.new()
