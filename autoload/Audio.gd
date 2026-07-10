@@ -45,7 +45,9 @@ func _ready() -> void:
 		_bg = AudioStreamPlayer.new()
 		_bg.stream = s
 		_bg.bus = "Master"
-		_bg.volume_db = -14.0
+		_bg.volume_db = -10.0
+		_bg.autoplay = true          # also restart if the stream ever ends
+		_bg.finished.connect(func(): if not _muted: _bg.play())
 		add_child(_bg)
 		_bg.play()
 

@@ -134,6 +134,27 @@ func reveal_pulse(world_pos: Vector2, radius := 340.0) -> void:
 	tw.tween_property(ring, "width", 2.0, 0.5)
 	tw.chain().tween_callback(ring.queue_free)
 
+## A magical star-twinkle at the reveal origin (ninja-adventure fx/5, CC0).
+## Layers over reveal_pulse so True Sight reads as a burst of insight.
+func reveal_sparkle(world_pos: Vector2, tint := Color(0.85, 0.95, 1.0)) -> void:
+	var host := get_tree().current_scene
+	if host == null:
+		return
+	var tex := SpriteSheet.load_tex("res://assets/fx/5.png")
+	if tex == null:
+		return
+	var sf := SpriteFrames.new()
+	SpriteSheet.add_strip(sf, "play", tex, 32, -1, 18.0, false)
+	var spr := AnimatedSprite2D.new()
+	spr.sprite_frames = sf
+	spr.modulate = tint
+	spr.scale = Vector2.ONE * 2.5
+	spr.global_position = world_pos
+	spr.z_index = 62
+	host.add_child(spr)
+	spr.play("play")
+	spr.animation_finished.connect(spr.queue_free)
+
 func illusion_break(world_pos: Vector2, color := Color(0.6, 0.85, 1.0)) -> void:
 	burst(world_pos, color, 26, 160.0)
 	add_trauma(0.28)

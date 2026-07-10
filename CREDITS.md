@@ -10,6 +10,7 @@ A game jam entry built for the theme **Illusion**.
 - **Trees** — "Free Tree Pixel Art Asset Pack", CraftPix.net free license.
 - **Desert props** (palms, rocks) — "Sketch Desert" by Kenney (kenney.nl), CC0.
 - **Gate + ground textures** (locked metal gate, sand, swamp water) — "Retro Textures: Fantasy" by Kenney (kenney.nl), CC0.
+- **True Sight reveal FX** (sparkle) — "Ninja Adventure" pack by Pixel-boy / Sparklin Labs (superpowers-html5.com), CC0.
 
 CraftPix free packs require a credit/backlink to https://craftpix.net when used — included here.
 

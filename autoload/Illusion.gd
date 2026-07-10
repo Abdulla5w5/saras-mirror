@@ -51,6 +51,7 @@ func activate(origin: Vector2) -> bool:
 	FX.add_trauma(0.14)
 	FX.flash(Color(0.55, 0.8, 1.0), 0.22)
 	FX.reveal_pulse(origin, RADIUS)
+	FX.reveal_sparkle(origin)
 
 	for obj in get_tree().get_nodes_in_group("illusion"):
 		if obj is Node2D and obj.has_method("reveal"):
